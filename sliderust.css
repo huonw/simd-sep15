@@ -203,6 +203,9 @@ img {
   border-left: 0px;
 }
 
+.args {
+  color: #666;
+}
 .group-a {
   background: rgba(255, 0, 0, 0.5)
 }

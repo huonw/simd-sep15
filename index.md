@@ -140,16 +140,16 @@ fn mandelbrot(c_x: f32x4, c_y: f32x4,
 }</pre></code>
 </td><td>
 <pre><code>.LBB1_1:
-<div class="group-a">    fmul    v7.4s, v5.4s, v5.4s
-    fmul    v16.4s, v6.4s, v6.4s</div>
-<div class="group-b">    fadd    v17.4s, v16.4s, v7.4s</div><div class="group-c">    fcmgt   v17.4s, v3.4s, v17.4s</div><div class="group-d">    umaxv   s18, v17.4s
-    fmov    w9, s18
-    cbz     w9, .LBB1_3</div><div class="group-a">    fmul    v6.4s, v6.4s, v5.4s</div>    add     x8, x8, #1
-<div class="group-e">    and     v5.16b, v17.16b, v4.16b</div>
-<div class="group-f">    fsub    v7.4s, v7.4s, v16.4s</div><div class="group-e">    add     v2.4s, v5.4s, v2.4s</div><div class="group-f">    fadd    v5.4s, v7.4s, v0.4s
-    fadd    v6.4s, v6.4s, v6.4s
-    fadd    v6.4s, v6.4s, v1.4s</div>    cmp     x8, #100
-    b.lo    .LBB1_1</code></pre>
+<div class="group-a">    fmul    <span class="args">v7.4s, v5.4s, v5.4s</span>
+    fmul    <span class="args">v16.4s, v6.4s, v6.4s</span></div>
+<div class="group-b">    fadd    <span class="args">v17.4s, v16.4s, v7.4s</span></div><div class="group-c">    fcmgt   <span class="args">v17.4s, v3.4s, v17.4s</span></div><div class="group-d">    umaxv   <span class="args">s18, v17.4s</span>
+    fmov    <span class="args">w9, s18</span>
+    cbz     <span class="args">w9, .LBB1_3</span></div><div class="group-a">    fmul    <span class="args">v6.4s, v6.4s, v5.4s</span></div>    add     <span class="args">x8, x8, #1</span>
+<div class="group-e">    and     <span class="args">v5.16b, v17.16b, v4.16b</span></div>
+<div class="group-f">    fsub    <span class="args">v7.4s, v7.4s, v16.4s</span></div><div class="group-e">    add     <span class="args">v2.4s, v5.4s, v2.4s</span></div><div class="group-f">    fadd    <span class="args">v5.4s, v7.4s, v0.4s</span>
+    fadd    <span class="args">v6.4s, v6.4s, v6.4s</span>
+    fadd    <span class="args">v6.4s, v6.4s, v1.4s</div>    cmp     <span class="args">x8, #100</span>
+    b.lo    <span class="args">.LBB1_1</span></code></pre>
 </td>
 </tr>
 <tbody>
