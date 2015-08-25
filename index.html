@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <title>SIMD in Rust</title>
+
+    
+    <link rel="stylesheet" href="rust.css">
+<link rel="stylesheet" href="sliderust.css">
+<script src="sliderust.js"></script>
+
+
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+    <h1 class="title">SIMD in Rust</h1>
+    <p>Huon Wilson</p>
+
+<p><small>Mozilla Research &amp; University of Sydney</small></p>
+
+<p><br></p>
+
+<p><a href="http://huonw.github.io/simd-aug15"><small>huonw.github.io/simd-aug15</small></a></p>
+
+<h1 id="simd?" class='section-header'><a
+                           href="#simd?">SIMD?</a></h1>
+<p><strong>S</strong>ingle <strong>I</strong>nstruction <strong>M</strong>ultiple <strong>D</strong>ata: Do many number
+  things at once.</p>
+
+<p><img src="vector.png" alt=""></p>
+
+<h1 id="important,-ubiquitous" class='section-header'><a
+                           href="#important,-ubiquitous">Important, ubiquitous</a></h1>
+<p>Non-embedded devices have SIMD:</p>
+
+<ul>
+<li><strong>x86</strong>/<strong>x86-64</strong>: SSE2, AVX2, AVX512 (etc.)</li>
+<li><strong>ARM</strong>/<strong>AArch64</strong>: NEON, VFP</li>
+<li><strong>PowerPC</strong>: AltiVec</li>
+<li><strong>MIPS</strong>: MSA (MDMX, MIPS-3D)</li>
+<li>(<strong>SPARC</strong>: Visual Instruction Set)</li>
+</ul>
+
+<h1 id="rfc-#1199" class='section-header'><a
+                           href="#rfc-#1199">RFC #1199</a></h1>
+<p><a href="https://github.com/rust-lang/rfcs/pull/1199"><img src="rfc.png" class="shadow"></img></a></p>
+
+<h1 id="pr-#27169-(et-al.)" class='section-header'><a
+                           href="#pr-#27169-(et-al.)">PR #27169 (et al.)</a></h1>
+<p><a href="https://github.com/rust-lang/rust/pull/27169"><img src="pr.png" class="shadow"></img></a></p>
+
+<h1 id="github.com/huonw/simd" class='section-header'><a
+                           href="#github.com/huonw/simd"><code>github.com/huonw/simd</code></a></h1>
+<p><a href="https://github.com/huonw/simd"><img src="crate.png" class="shadow"></img></a></p>
+
+<h1 id="publicity" class='section-header'><a
+                           href="#publicity">Publicity</a></h1>
+<p><a href="http://huonw.github.io/blog/2015/08/simd-in-rust/"><img src="blog.png" class="shadow"></img></a></p>
+
+<p><img src="ga.png" class="shadow"></img></p>
+
+<h1 id="mandelbrot" class='section-header'><a
+                           href="#mandelbrot">Mandelbrot</a></h1>
+<p><img src="mandel.png" alt=""></p>
+
+<h1 id="<img-src=mandel.png-class='header-image'>" class='section-header'><a
+                           href="#<img-src=mandel.png-class='header-image'>"><img src=mandel.png class='header-image'></a></h1><pre class='rust rust-example-rendered'>
+<span class='kw'>fn</span> <span class='ident'>mandelbrot</span>(<span class='ident'>c_x</span>: <span class='ident'>f32</span>, <span class='ident'>c_y</span>: <span class='ident'>f32</span>,
+              <span class='ident'>max_iter</span>: <span class='ident'>u32</span>) <span class='op'>-&gt;</span> <span class='ident'>u32</span>
+{
+    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>x</span> <span class='op'>=</span> <span class='ident'>c_x</span>;
+    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>y</span> <span class='op'>=</span> <span class='ident'>c_y</span>;
+
+    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>count</span> <span class='op'>=</span> <span class='number'>0</span>;
+    <span class='kw'>while</span> <span class='ident'>count</span> <span class='op'>&lt;</span> <span class='ident'>max_iter</span> {
+        <span class='kw'>let</span> <span class='ident'>xy</span> <span class='op'>=</span> <span class='ident'>x</span> <span class='op'>*</span> <span class='ident'>y</span>;
+        <span class='kw'>let</span> <span class='ident'>xx</span> <span class='op'>=</span> <span class='ident'>x</span> <span class='op'>*</span> <span class='ident'>x</span>;
+        <span class='kw'>let</span> <span class='ident'>yy</span> <span class='op'>=</span> <span class='ident'>y</span> <span class='op'>*</span> <span class='ident'>y</span>;
+        <span class='kw'>let</span> <span class='ident'>sum</span> <span class='op'>=</span> <span class='ident'>xx</span> <span class='op'>+</span> <span class='ident'>yy</span>;
+
+        <span class='kw'>if</span> <span class='ident'>sum</span> <span class='op'>&gt;</span> <span class='number'>4.0</span> { <span class='kw'>break</span> }
+
+        <span class='ident'>count</span> <span class='op'>+=</span> <span class='number'>1</span>;
+
+        <span class='ident'>x</span> <span class='op'>=</span> <span class='ident'>xx</span> <span class='op'>-</span> <span class='ident'>yy</span> <span class='op'>+</span> <span class='ident'>c_x</span>;
+        <span class='ident'>y</span> <span class='op'>=</span> <span class='ident'>xy</span> <span class='op'>+</span> <span class='ident'>xy</span> <span class='op'>+</span> <span class='ident'>c_y</span>;
+    }
+    <span class='ident'>count</span>
+}</pre>
+
+<h1 id="<img-src=mandel.png-class='header-image'>&times;4" class='section-header'><a
+                           href="#<img-src=mandel.png-class='header-image'>&times;4"><img src=mandel.png class='header-image'>&times;4</a></h1><pre class='rust rust-example-rendered'>
+<span class='kw'>fn</span> <span class='ident'>mandelbrot</span>(<span class='ident'>c_x</span>: <span class='ident'>f32x4</span>, <span class='ident'>c_y</span>: <span class='ident'>f32x4</span>,
+              <span class='ident'>max_iter</span>: <span class='ident'>u32</span>) <span class='op'>-&gt;</span> <span class='ident'>u32x4</span>
+{
+    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>x</span> <span class='op'>=</span> <span class='ident'>c_x</span>;
+    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>y</span> <span class='op'>=</span> <span class='ident'>c_y</span>;
+
+    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>count</span> <span class='op'>=</span> <span class='ident'>u32x4</span>::<span class='ident'>splat</span>(<span class='number'>0</span>);
+    <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='ident'>max_iter</span> <span class='kw'>as</span> <span class='ident'>usize</span> {
+        <span class='kw'>let</span> <span class='ident'>xy</span> <span class='op'>=</span> <span class='ident'>x</span> <span class='op'>*</span> <span class='ident'>y</span>;
+        <span class='kw'>let</span> <span class='ident'>xx</span> <span class='op'>=</span> <span class='ident'>x</span> <span class='op'>*</span> <span class='ident'>x</span>;
+        <span class='kw'>let</span> <span class='ident'>yy</span> <span class='op'>=</span> <span class='ident'>y</span> <span class='op'>*</span> <span class='ident'>y</span>;
+        <span class='kw'>let</span> <span class='ident'>sum</span> <span class='op'>=</span> <span class='ident'>xx</span> <span class='op'>+</span> <span class='ident'>yy</span>;
+        <span class='kw'>let</span> <span class='ident'>mask</span> <span class='op'>=</span> <span class='ident'>sum</span>.<span class='ident'>lt</span>(<span class='ident'>f32x4</span>::<span class='ident'>splat</span>(<span class='number'>4.0</span>));
+        <span class='kw'>if</span> <span class='op'>!</span><span class='ident'>mask</span>.<span class='ident'>any</span>() { <span class='kw'>break</span> }
+
+        <span class='ident'>count</span> <span class='op'>=</span> <span class='ident'>count</span> <span class='op'>+</span> <span class='ident'>mask</span>.<span class='ident'>to_i</span>().<span class='ident'>select</span>(<span class='ident'>u32x4</span>::<span class='ident'>splat</span>(<span class='number'>1</span>),
+                                           <span class='ident'>u32x4</span>::<span class='ident'>splat</span>(<span class='number'>0</span>));
+        <span class='ident'>x</span> <span class='op'>=</span> <span class='ident'>xx</span> <span class='op'>-</span> <span class='ident'>yy</span> <span class='op'>+</span> <span class='ident'>c_x</span>;
+        <span class='ident'>y</span> <span class='op'>=</span> <span class='ident'>xy</span> <span class='op'>+</span> <span class='ident'>xy</span> <span class='op'>+</span> <span class='ident'>c_y</span>;
+    }
+    <span class='ident'>count</span>
+}</pre>
+
+<h1 id="benchmarks..." class='section-header'><a
+                           href="#benchmarks...">Benchmarks...</a></h1>
+<p>2.4&times; faster, on average.</p>
+
+<p><img src="chart-x86-64.png" alt=""></p>
+
+<h1 id="benchmarks...-everywhere" class='section-header'><a
+                           href="#benchmarks...-everywhere">Benchmarks... everywhere</a></h1>
+<p>2.1&times; faster, on average.</p>
+
+<p><img src="chart-aarch64.png" alt=""></p>
+
+<h1 id="benchmarks...-everywhere-1" class='section-header'><a
+                           href="#benchmarks...-everywhere-1">Benchmarks... everywhere</a></h1>
+<p>2.4&times; faster, on average.</p>
+
+<p><img src="chart-arm.png" alt=""></p>
+
+<h1 id="<img-src=mandel.png-class='header-image'>&times;4:-zero-overhead" class='section-header'><a
+                           href="#<img-src=mandel.png-class='header-image'>&times;4:-zero-overhead"><img src=mandel.png class='header-image'>&times;4: zero overhead</a></h1>
+<table class="compare">
+<tbody>
+<tr><td>
+<pre><code>for _ in 0..max_iter as usize {
+<div class="group-a">    let xy = x * y;
+    let xx = x * x;
+    let yy = y * y;</div><div class="group-b">    let sum = xx + yy;</div><div class="group-c">    let mask = sum.lt(f32x4::splat(4.0));</div><div class="group-d">    if !mask.any() {
+
+        break }</div>
+
+<div class="group-e">    count = count + mask.to_i().select(u32x4::splat(1),
+                                       u32x4::splat(0));</div><div class="group-f">    x = xx - yy + c_x;</div>
+
+<div class="group-f">    y = xy + xy + c_y;</div>
+
+}</pre></code>
+</td><td>
+<pre><code>.LBB1_1:
+<div class="group-a">    fmul    v7.4s, v5.4s, v5.4s
+    fmul    v16.4s, v6.4s, v6.4s</div>
+<div class="group-b">    fadd    v17.4s, v16.4s, v7.4s</div><div class="group-c">    fcmgt   v17.4s, v3.4s, v17.4s</div><div class="group-d">    umaxv   s18, v17.4s
+    fmov    w9, s18
+    cbz     w9, .LBB1_3</div><div class="group-a">    fmul    v6.4s, v6.4s, v5.4s</div>    add     x8, x8, #1
+<div class="group-e">    and     v5.16b, v17.16b, v4.16b</div>
+<div class="group-f">    fsub    v7.4s, v7.4s, v16.4s</div><div class="group-e">    add     v2.4s, v5.4s, v2.4s</div><div class="group-f">    fadd    v5.4s, v7.4s, v0.4s
+    fadd    v6.4s, v6.4s, v6.4s
+    fadd    v6.4s, v6.4s, v1.4s</div>    cmp     x8, #100
+    b.lo    .LBB1_1</code></pre>
+</td>
+</tr>
+<tbody>
+</table>
+
+<h1 id="future" class='section-header'><a
+                           href="#future">Future</a></h1>
+<ul>
+<li>More platforms</li>
+<li>More comprehensive support in <code>simd</code></li>
+<li>More libraries</li>
+<li>Dynamic SIMD feature dispatch (choose between <code>foo_avx</code>,
+<code>foo_sse41</code>, <code>foo_sse2</code>, etc.)</li>
+</ul>
+
+    <script type="text/javascript">
+        window.playgroundUrl = "";
+    </script>
+    
+</body>
+</html>
