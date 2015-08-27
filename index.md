@@ -15,15 +15,15 @@ Huon Wilson
 
 ![](vector.png)
 
-# Important, ubiquitous
+# <span style='font-size: 0.9em'>Acronyms, Acronyms Everywhere</span>
 
 Non-embedded devices have SIMD:
 
-- **x86**/<strong>x86-64</strong>: SSE2, AVX2, AVX512 (etc.)
-- **ARM**/<strong>AArch64</strong>: NEON, VFP
+- **x86**/<strong>x86-64</strong>: SSE, AVX, AVX512 (etc.)
+- **ARM**/<strong>AArch64</strong>: NEON, (VFP)
 - **PowerPC**: AltiVec
-- **MIPS**: MSA (MDMX, MIPS-3D)
-- (**SPARC**: Visual Instruction Set)
+- **MIPS**: MSA, (MDMX, MIPS-3D)
+- (**SPARC**: VIS)
 
 # RFC #1199
 
@@ -101,25 +101,6 @@ fn mandelbrot(c_x: f32x4, c_y: f32x4,
 }
 ```
 
-
-# Benchmarks...
-
-2.4&times; faster, on average.
-
-![](chart-x86-64.png)
-
-# Benchmarks... everywhere
-
-2.1&times; faster, on average.
-
-![](chart-aarch64.png)
-
-# Benchmarks... everywhere
-
-2.4&times; faster, on average.
-
-![](chart-arm.png)
-
 # <img src=mandel.png class='header-image'>&times;4: zero overhead
 
 <table class="compare">
@@ -154,6 +135,24 @@ fn mandelbrot(c_x: f32x4, c_y: f32x4,
 </tr>
 <tbody>
 </table>
+
+# Benchmarks...
+
+2.4&times; faster, on average.
+
+![](chart-x86-64.png)
+
+# Benchmarks... everywhere
+
+2.1&times; faster, on average.
+
+![](chart-aarch64.png)
+
+# Benchmarks... everywhere<sup>2</sup>
+
+2.4&times; faster, on average.
+
+![](chart-arm.png)
 
 # Future
 

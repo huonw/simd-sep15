@@ -5,7 +5,8 @@ html, body {
 }
 
 h1 {
-    font-size: 70px;
+  font-size: 70px;
+  border: none;
 }
 
 h2 {
@@ -17,7 +18,7 @@ body, h5 {
 }
 
 pre {
-    font-size: 30px;
+    font-size: 25px;
 }
 
 section {
@@ -186,7 +187,7 @@ img {
 }
 .header-image {
   display: inline-block;
-  height: 1.4em;
+  height: 2em;
   vertical-align: middle;
 }
 
