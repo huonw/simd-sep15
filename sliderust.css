@@ -18,7 +18,7 @@ body, h5 {
 }
 
 pre {
-    font-size: 25px;
+  font-size: 25px;
 }
 
 section {
@@ -133,7 +133,7 @@ h1:empty {
 }
 
 pre {
-  margin: 0;
+  margin: 0 0 35px;
 }
 
 .language-error {

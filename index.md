@@ -19,6 +19,7 @@ Huon Wilson
 - 3D graphics
 - Cryptography
 - Numerical/scientific processing
+- ...
 
 # <span style='font-size: 0.9em'>Acronyms, Acronyms Everywhere</span>
 
@@ -127,7 +128,7 @@ fn mandelbrot(c_x: f32x4, c_y: f32x4,
 <tbody>
 </table>
 
-# Benchmarks...
+# Benchmarks
 
 2.4&times; faster, on average.
 
@@ -145,8 +146,37 @@ fn mandelbrot(c_x: f32x4, c_y: f32x4,
 
 ![](chart-arm.png)
 
+# Platform-Specific
+
+`f64` vectors on x86 with SSE2 and AArch64:
+
+```rust
+#[cfg(target_feature = "sse2")]
+use simd::x86::sse2::*;
+#[cfg(target_arch = "aarch64")]
+use simd::aarch64::neon::*;
+
+// ...
+    let mut dx = [f64x2::splat(0.0); 3];
+// ...
+```
+
+# Platform-Specific
+
+SSSE3 `pshufb` instruction:
+
+```rust
+use simd::x86::ssse3::*;
+
+let x: u8x16 = ...;
+let y: u8x16 = ...;
+
+x.shuffle_bytes(y)
+```
+
 # Future
 
+- Stability
 - More platforms
 - More comprehensive support in `simd`
 - Dynamic SIMD feature dispatch (choose between `foo_avx`,
