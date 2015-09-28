@@ -2,11 +2,9 @@
 
 Huon Wilson
 
-<small>Mozilla Research & University of Sydney</small>
-
 <br>
 
-[<small>huonw.github.io/simd-aug15</small>](http://huonw.github.io/simd-aug15)
+[<small>huonw.github.io/simd-sep15</small>](http://huonw.github.io/simd-sep15)
 
 # SIMD?
 
@@ -14,6 +12,13 @@ Huon Wilson
   things at once.
 
 ![](vector.png)
+
+# Why?
+
+- Multimedia
+- 3D graphics
+- Cryptography
+- Numerical/scientific processing
 
 # <span style='font-size: 0.9em'>Acronyms, Acronyms Everywhere</span>
 
@@ -25,23 +30,9 @@ Non-embedded devices have SIMD:
 - **MIPS**: MSA, (MDMX, MIPS-3D)
 - (**SPARC**: VIS)
 
-# RFC #1199
-
-[<img src="rfc.png" class="shadow"></img>](https://github.com/rust-lang/rfcs/pull/1199)
-
-# PR #27169 (et al.)
-
-[<img src="pr.png" class="shadow"></img>](https://github.com/rust-lang/rust/pull/27169)
-
 # `github.com/huonw/simd`
 
 [<img src="crate.png" class="shadow"></img>](https://github.com/huonw/simd)
-
-# Publicity
-
-[<img src="blog.png" class="shadow"></img>](http://huonw.github.io/blog/2015/08/simd-in-rust/)
-
-<img src="ga.png" class="shadow"></img>
 
 # Mandelbrot
 
@@ -158,6 +149,6 @@ fn mandelbrot(c_x: f32x4, c_y: f32x4,
 
 - More platforms
 - More comprehensive support in `simd`
-- More libraries
 - Dynamic SIMD feature dispatch (choose between `foo_avx`,
   `foo_sse41`, `foo_sse2`, etc.)
+- More libraries
